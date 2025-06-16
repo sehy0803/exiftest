@@ -20,6 +20,7 @@
     "react-native-exif-reader": "github:inaturalist/react-native-exif-reader",
     "react-native-fs": "^2.20.0",
     "react-native-image-picker": "^8.2.1",
+    "react-native-permissions": "^5.4.1",
     "react-native-safe-area-context": "^5.4.1"
   },
   "devDependencies": {
