@@ -9,6 +9,8 @@ import { handlePermissions } from './permission';
 // import { readExif } from 'react-native-exif-reader';
 // import { Buffer } from 'buffer';
 import { readAsync } from '@lodev09/react-native-exify';
+import { pick } from '@react-native-documents/picker'
+// import { read } from 'react-native-fs';
 
 export default function TestScreen() {
   useEffect(() => {
@@ -26,28 +28,49 @@ export default function TestScreen() {
       return;
 
     const image = result.assets[0];
-    console.log('react-native-image-picker 카메라 결과:', image);
-
-    const tags = await readAsync(image.uri);
-    console.log('exify: ', tags);
+    console.log('image-picker 카메라 결과:', image);
+    await readExif(image.uri);
   };
 
   const onLaunchImageLibrary = async () => {
     const result = await launchImageLibrary({
       mediaType: 'photo',
       includeExtra: true,
+      selectionLimit: 1,
       useLegacyPicker: false,
+      presentationStyle: 'fullScreen',
     });
 
     if (result.didCancel || !result.assets || result.assets.length === 0)
       return;
 
     const image = result.assets[0];
-    console.log('react-native-image-picker 갤러리 결과: ', image);
-
-    const tags = await readAsync(image.uri);
-    console.log('exify: ', tags);
+    console.log('image-picker 갤러리 결과: ', image);
+    await readExif(image.uri);
   };
+
+  const onDocumentPicker = async () => {
+    try {
+          const [pickResult] = await pick({mode:'import', presentationStyle: 'fullScreen'})
+          console.log('파일 선택기 결과:', pickResult);
+          await readExif(pickResult.uri);
+        } catch (err) {
+          if (err.code === 'OPERATION_CANCELED') {
+            return;
+          }
+          console.error('파일 선택 오류:', err);
+        }
+  };
+
+  const readExif = async (uri) => {
+    try {
+      const tags = await readAsync(uri);
+      console.log('EXIF 데이터:', tags);
+    } catch (error) {
+      console.error('EXIF 데이터 읽기 오류:', error);
+    }
+  }
+
 
   return (
     <SafeAreaProvider>
@@ -63,6 +86,15 @@ export default function TestScreen() {
           >
             <Text>갤러리</Text>
           </TouchableOpacity>
+
+          <Text>react-native-documents-picker</Text>
+          <TouchableOpacity
+            style={styles.btn}
+            onPress={() => onDocumentPicker()}
+          >
+            <Text>파일 선택기</Text>
+          </TouchableOpacity>
+
         </View>
       </SafeAreaView>
     </SafeAreaProvider>

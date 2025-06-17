@@ -17,7 +17,7 @@ const checkAndroidPermissions = async () => {
   return cameraGranted && mediaGranted;
 };
 
-// ✅ Android 권한 요청
+// Android 권한 요청
 const requestAndroidPermissions = async () => {
   const result = await PermissionsAndroid.requestMultiple([
     PermissionsAndroid.PERMISSIONS.CAMERA,
@@ -59,7 +59,7 @@ const requestIOSPermissions = async () => {
   }
 };
 
-// 전체 권한 체크 함수
+// 전체 권한 체크
 export const handlePermissions = async () => {
   try {
     if (Platform.OS === 'android') {
