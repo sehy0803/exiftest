@@ -1,10 +1,5 @@
 import { Platform, PermissionsAndroid } from 'react-native';
-import {
-  PERMISSIONS,
-  check,
-  request,
-  RESULTS,
-} from 'react-native-permissions';
+import { PERMISSIONS, check, request, RESULTS } from 'react-native-permissions';
 
 // Android 권한 확인
 const checkAndroidPermissions = async () => {
@@ -14,7 +9,10 @@ const checkAndroidPermissions = async () => {
   const mediaGranted = await PermissionsAndroid.check(
     PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
   );
-  return cameraGranted && mediaGranted;
+  const locationGranted = await PermissionsAndroid.check(
+    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+  );
+  return cameraGranted && mediaGranted && locationGranted;
 };
 
 // Android 권한 요청
@@ -22,19 +20,24 @@ const requestAndroidPermissions = async () => {
   const result = await PermissionsAndroid.requestMultiple([
     PermissionsAndroid.PERMISSIONS.CAMERA,
     PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
   ]);
 
   const cameraResult = result[PermissionsAndroid.PERMISSIONS.CAMERA];
   const mediaResult = result[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES];
+  const locationResult =
+    result[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION];
 
   if (
     cameraResult === PermissionsAndroid.RESULTS.GRANTED &&
-    mediaResult === PermissionsAndroid.RESULTS.GRANTED
+    mediaResult === PermissionsAndroid.RESULTS.GRANTED &&
+    locationResult === PermissionsAndroid.RESULTS.GRANTED
   ) {
     return 'granted';
   } else if (
     cameraResult === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
-    mediaResult === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
+    mediaResult === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
+    locationResult === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
   ) {
     return 'never_ask_again';
   } else {
@@ -46,12 +49,18 @@ const requestAndroidPermissions = async () => {
 const requestIOSPermissions = async () => {
   const camera = await request(PERMISSIONS.IOS.CAMERA);
   const photo = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
+  const location = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
 
-  if (camera === RESULTS.GRANTED && photo === RESULTS.GRANTED) {
+  if (
+    camera === RESULTS.GRANTED &&
+    photo === RESULTS.GRANTED &&
+    location === RESULTS.GRANTED
+  ) {
     return 'granted';
   } else if (
     camera === RESULTS.BLOCKED ||
-    photo === RESULTS.BLOCKED
+    photo === RESULTS.BLOCKED ||
+    location === RESULTS.BLOCKED
   ) {
     return 'never_ask_again';
   } else {
@@ -71,10 +80,12 @@ export const handlePermissions = async () => {
     } else {
       const cameraStatus = await check(PERMISSIONS.IOS.CAMERA);
       const photoStatus = await check(PERMISSIONS.IOS.PHOTO_LIBRARY);
+      const locationStatus = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
 
       if (
         cameraStatus !== RESULTS.GRANTED ||
-        photoStatus !== RESULTS.GRANTED
+        photoStatus !== RESULTS.GRANTED ||
+        locationStatus !== RESULTS.GRANTED
       ) {
         const result = await requestIOSPermissions();
         console.log('iOS 권한 요청 결과:', result);
