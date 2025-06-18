@@ -76,7 +76,6 @@ PODS:
     - React-RCTText (= 0.80.0)
     - React-RCTVibration (= 0.80.0)
   - React-callinvoker (0.80.0)
-  - React-Codegen (0.1.0)
   - React-Core (0.80.0):
     - boost
     - DoubleConversion
@@ -1707,13 +1706,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-exif-reader (0.4.2):
-    - RCT-Folly
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Codegen
-    - React-Core
-    - ReactCommon/turbomodule/core
+  - react-native-geolocation-service (5.3.1):
+    - React
   - react-native-image-picker (8.2.1):
     - boost
     - DoubleConversion
@@ -2309,6 +2303,69 @@ PODS:
     - SocketRocket
   - RNFS (2.20.0):
     - React-Core
+  - RNImageCropPicker (0.50.1):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-RCTImage
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - RNImageCropPicker/QBImagePickerController (= 0.50.1)
+    - SocketRocket
+    - TOCropViewController (~> 2.7.4)
+    - Yoga
+  - RNImageCropPicker/QBImagePickerController (0.50.1):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-RCTImage
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - TOCropViewController (~> 2.7.4)
+    - Yoga
   - RNPermissions (5.4.1):
     - boost
     - DoubleConversion
@@ -2339,6 +2396,13 @@ PODS:
     - SocketRocket
     - Yoga
   - SocketRocket (0.7.1)
+  - TOCropViewController (2.7.4)
+  - VisionCamera (4.7.0):
+    - VisionCamera/Core (= 4.7.0)
+    - VisionCamera/React (= 4.7.0)
+  - VisionCamera/Core (4.7.0)
+  - VisionCamera/React (4.7.0):
+    - React-Core
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -2385,7 +2449,7 @@ DEPENDENCIES:
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - "react-native-document-picker (from `../node_modules/@react-native-documents/picker`)"
-  - react-native-exif-reader (from `../node_modules/react-native-exif-reader`)
+  - react-native-geolocation-service (from `../node_modules/react-native-geolocation-service`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
@@ -2420,14 +2484,16 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNFS (from `../node_modules/react-native-fs`)
+  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - SocketRocket (~> 0.7.1)
+  - VisionCamera (from `../node_modules/react-native-vision-camera`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
   trunk:
-    - React-Codegen
     - SocketRocket
+    - TOCropViewController
 
 EXTERNAL SOURCES:
   boost:
@@ -2515,8 +2581,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
   react-native-document-picker:
     :path: "../node_modules/@react-native-documents/picker"
-  react-native-exif-reader:
-    :path: "../node_modules/react-native-exif-reader"
+  react-native-geolocation-service:
+    :path: "../node_modules/react-native-geolocation-service"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-safe-area-context:
@@ -2585,8 +2651,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNFS:
     :path: "../node_modules/react-native-fs"
+  RNImageCropPicker:
+    :path: "../node_modules/react-native-image-crop-picker"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
+  VisionCamera:
+    :path: "../node_modules/react-native-vision-camera"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -2605,7 +2675,6 @@ SPEC CHECKSUMS:
   RCTTypeSafety: a5cf7a7e80baf972e331dc028e5d5c19bb2535a4
   React: 606d4dccbcf29aec4dc84a7921405a28e1701a22
   React-callinvoker: 0e13bd3c039df9ceef04f7381a81f017655c8361
-  React-Codegen: 4b8b4817cea7a54b83851d4c1f91f79aa73de30a
   React-Core: d118e66b5b561f5ab999dd7f9cf14f54dab376a7
   React-CoreModules: 6ec48c52c9ff2ca3fa110153de09e4c2379f1860
   React-cxxreact: cb406100002503e44de4b725e581ce24f47003b9
@@ -2634,7 +2703,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: f5754c33877eaf36e4c76c613b35615a181c85c5
   React-microtasksnativemodule: 23df6374a3ac422d8c2927839bcaeed61fee3dad
   react-native-document-picker: 0b9e7c2103ae0ce974944f0a85044adba41a2311
-  react-native-exif-reader: 0a3beb46ef9f33e4dda5f50795a01b6b510c1459
+  react-native-geolocation-service: 32b2c2a3b91e70ce2a8d0c684801aaeb0a07e0ec
   react-native-image-picker: e9d833df19e87e25e38ddc0be3bad92f57307765
   react-native-safe-area-context: c98c858bd57e01b4047f957934f0a34b173028fb
   React-NativeModulesApple: e16d5c133019987285f001fbf1461a861e40426f
@@ -2669,8 +2738,11 @@ SPEC CHECKSUMS:
   ReactCodegen: 5d41e1df061200130dd326e55cdfdf94b0289c6e
   ReactCommon: b028d09a66e60ebd83ca59d8cc9a1216360db147
   RNFS: 89de7d7f4c0f6bafa05343c578f61118c8282ed8
+  RNImageCropPicker: b7dfe6fb31e96646a905b7a1e1f2d35f1cbf1741
   RNPermissions: 9b757d12b6b7f4920ceacdf32082e72205ce2514
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
+  TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
+  VisionCamera: c5c07db74721d37f4c9f8331ad1f8da7b2539995
   Yoga: 0c4b7d2aacc910a1f702694fa86be830386f4ceb
 
 PODFILE CHECKSUM: 181ff2474e1b48489048ad8491c6cb2d2b1ce364

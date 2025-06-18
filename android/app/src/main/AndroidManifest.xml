@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" /> <!-- 사용자가 선택한 일부 사진/영상만 접근 -->
 
     <!-- 위치 권한 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application

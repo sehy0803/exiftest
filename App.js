@@ -3,11 +3,12 @@ import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { handlePermissions } from './permission';
-import RNFS from 'react-native-fs';
+// import RNFS from 'react-native-fs';
 import { readAsync } from '@lodev09/react-native-exify';
 import { pick } from '@react-native-documents/picker';
 import { Camera, useCameraDevice } from 'react-native-vision-camera';
 // import Geolocation from 'react-native-geolocation-service';
+import ImagePicker from "react-native-image-crop-picker";
 
 export default function TestScreen() {
   const [showVisionCamera, setShowVisionCamera] = useState(false);
@@ -16,29 +17,15 @@ export default function TestScreen() {
 
   useEffect(() => {
     handlePermissions();
-
-    // 비전 카메라 권한 요청
-    (async () => {
-      const status = await Camera.requestCameraPermission();
-      console.log('VisionCamera 권한:', status);
-    })();
   }, []);
 
-  const takePicture = async () => {
-    console.log('찰칵');
-
+  const onVisionCamera = async () => {
     try {
       const photo = await camera.current?.takePhoto();
       if (photo?.path) {
         const fullPath = `file://${photo.path}`;
         console.log('📷 촬영된 사진 경로:', fullPath);
         await readExif(fullPath);
-
-        const fileUri = await saveToGallery(fullPath);
-        if (fileUri) {
-          const exif = await readAsync(fileUri);
-          console.log('📌 갤러리에 저장 후 EXIF:', exif);
-        }
       } else {
         console.log('❌ 사진 경로 없음');
       }
@@ -46,19 +33,6 @@ export default function TestScreen() {
       console.error('📸 촬영 실패:', err);
     } finally {
       setShowVisionCamera(false);
-    }
-  };
-
-  const saveToGallery = async tempPath => {
-    const destPath = `${RNFS.PicturesDirectoryPath}/vision_${Date.now()}.jpg`;
-
-    try {
-      await RNFS.copyFile(tempPath, destPath);
-      console.log('📥 갤러리에 저장 완료:', destPath);
-      return `file://${destPath}`;
-    } catch (err) {
-      console.error('❌ 저장 실패:', err);
-      return null;
     }
   };
 
@@ -116,6 +90,32 @@ export default function TestScreen() {
     }
   };
 
+  const onCropPickerCamera = async () => {
+    try {
+      ImagePicker.openCamera({
+        mediaType: 'photo',
+        includeExif: true,
+      }).then((image) => {
+        console.log('react-native-image-crop-picker 카메라 결과:', image);
+      });
+    } catch (error) {
+      console.error('react-native-image-crop-picker 카메라 오류:', error);
+    }
+  };
+
+  const onCropPickerPhoto = async () => {
+    try {
+      ImagePicker.openPicker({
+        mediaType: 'photo',
+        includeExif: true,
+      }).then((image) => {
+          console.log('react-native-image-crop-picker 갤러리 결과:', image);
+      });
+    } catch (error) {
+      console.error('react-native-image-crop-picker 갤러리 오류:', error);
+    }
+  };
+
   if (showVisionCamera && device != null) {
     return (
       <View style={{ flex: 1 }}>
@@ -135,7 +135,7 @@ export default function TestScreen() {
             padding: 10,
             borderRadius: 8,
           }}
-          onPress={takePicture}
+          onPress={onVisionCamera}
         >
           <Text>촬영</Text>
         </TouchableOpacity>
@@ -171,6 +171,24 @@ export default function TestScreen() {
             <Text>갤러리</Text>
           </TouchableOpacity>
 
+          <View style={styles.line} />
+
+          <Text>react-native-image-crop-picker</Text>
+          <TouchableOpacity
+            style={styles.btn}
+            onPress={() => onCropPickerCamera()}
+          >
+            <Text>카메라</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.btn}
+            onPress={() => onCropPickerPhoto()}
+          >
+            <Text>갤러리</Text>
+          </TouchableOpacity>
+
+          <View style={styles.line} />
+          
           <Text>react-native-documents-picker</Text>
           <TouchableOpacity
             style={styles.btn}
@@ -178,13 +196,15 @@ export default function TestScreen() {
           >
             <Text>파일 선택기</Text>
           </TouchableOpacity>
+          
+          <View style={styles.line} />
 
           <Text>vision camera</Text>
           <TouchableOpacity
             style={styles.btn}
             onPress={() => setShowVisionCamera(true)}
           >
-            <Text>카메라2</Text>
+            <Text>카메라</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -210,4 +230,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'orange',
     elevation: 4,
   },
+  line: {
+    width: '100%',
+    height: 1,
+    backgroundColor: '#ccc',
+    marginVertical: 10,
+  }
 });

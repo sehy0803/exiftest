@@ -9,10 +9,15 @@ const checkAndroidPermissions = async () => {
   const mediaGranted = await PermissionsAndroid.check(
     PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
   );
-  const locationGranted = await PermissionsAndroid.check(
+  const coarseLocationGranted = await PermissionsAndroid.check(
+    PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+  );
+  const fineLocationGranted = await PermissionsAndroid.check(
     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
   );
-  return cameraGranted && mediaGranted && locationGranted;
+  return (
+    cameraGranted && mediaGranted && coarseLocationGranted && fineLocationGranted
+  );
 };
 
 // Android 권한 요청
@@ -20,25 +25,32 @@ const requestAndroidPermissions = async () => {
   const result = await PermissionsAndroid.requestMultiple([
     PermissionsAndroid.PERMISSIONS.CAMERA,
     PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+    PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
   ]);
 
   const cameraResult = result[PermissionsAndroid.PERMISSIONS.CAMERA];
   const mediaResult = result[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES];
-  const locationResult =
+  const coarseLocationResult =
+    result[PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION];
+  const fineLocationResult =
     result[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION];
 
   if (
     cameraResult === PermissionsAndroid.RESULTS.GRANTED &&
     mediaResult === PermissionsAndroid.RESULTS.GRANTED &&
-    locationResult === PermissionsAndroid.RESULTS.GRANTED
+    coarseLocationResult === PermissionsAndroid.RESULTS.GRANTED &&
+    fineLocationResult === PermissionsAndroid.RESULTS.GRANTED
+    
   ) {
     return 'granted';
   } else if (
     cameraResult === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
     mediaResult === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
-    locationResult === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
-  ) {
+    coarseLocationResult === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
+    fineLocationResult === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
+    
+  ){
     return 'never_ask_again';
   } else {
     return 'denied';
