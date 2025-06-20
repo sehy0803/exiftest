@@ -9,6 +9,9 @@ const checkAndroidPermissions = async () => {
   const mediaGranted = await PermissionsAndroid.check(
     PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
   );
+  const mediaLocationGranted = await PermissionsAndroid.check(
+    PermissionsAndroid.PERMISSIONS.ACCESS_MEDIA_LOCATION,
+  );
   const coarseLocationGranted = await PermissionsAndroid.check(
     PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
   );
@@ -16,7 +19,11 @@ const checkAndroidPermissions = async () => {
     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
   );
   return (
-    cameraGranted && mediaGranted && coarseLocationGranted && fineLocationGranted
+    cameraGranted &&
+    mediaGranted &&
+    mediaLocationGranted &&
+    coarseLocationGranted &&
+    fineLocationGranted
   );
 };
 
@@ -25,32 +32,40 @@ const requestAndroidPermissions = async () => {
   const result = await PermissionsAndroid.requestMultiple([
     PermissionsAndroid.PERMISSIONS.CAMERA,
     PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+    PermissionsAndroid.PERMISSIONS.ACCESS_MEDIA_LOCATION,
     PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
   ]);
 
   const cameraResult = result[PermissionsAndroid.PERMISSIONS.CAMERA];
   const mediaResult = result[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES];
+  const mediaLocationResult =
+    result[PermissionsAndroid.PERMISSIONS.ACCESS_MEDIA_LOCATION];
   const coarseLocationResult =
     result[PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION];
   const fineLocationResult =
     result[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION];
 
+  console.log('cameraResult: ', cameraResult);
+  console.log('mediaResult: ', mediaResult);
+  console.log('mediaLocationResult: ', mediaLocationResult);
+  console.log('coarseLocationResult: ', coarseLocationResult);
+  console.log('fineLocationResult: ', fineLocationResult);
   if (
     cameraResult === PermissionsAndroid.RESULTS.GRANTED &&
     mediaResult === PermissionsAndroid.RESULTS.GRANTED &&
+    mediaLocationResult === PermissionsAndroid.RESULTS.GRANTED &&
     coarseLocationResult === PermissionsAndroid.RESULTS.GRANTED &&
     fineLocationResult === PermissionsAndroid.RESULTS.GRANTED
-    
   ) {
     return 'granted';
   } else if (
     cameraResult === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
     mediaResult === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
+    mediaLocationResult === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
     coarseLocationResult === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
     fineLocationResult === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
-    
-  ){
+  ) {
     return 'never_ask_again';
   } else {
     return 'denied';

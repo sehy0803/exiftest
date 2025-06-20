@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
@@ -6,33 +6,21 @@ import { handlePermissions } from './permission';
 // import RNFS from 'react-native-fs';
 import { readAsync } from '@lodev09/react-native-exify';
 import { pick } from '@react-native-documents/picker';
-import { Camera, useCameraDevice } from 'react-native-vision-camera';
 // import Geolocation from 'react-native-geolocation-service';
-import ImagePicker from "react-native-image-crop-picker";
+import ImagePicker from 'react-native-image-crop-picker';
+import DocumentScanner from 'react-native-document-scanner-plugin';
 
 export default function TestScreen() {
-  const [showVisionCamera, setShowVisionCamera] = useState(false);
-  const device = useCameraDevice('back');
-  const camera = useRef(null);
-
   useEffect(() => {
     handlePermissions();
   }, []);
 
-  const onVisionCamera = async () => {
+  const readExif = async uri => {
     try {
-      const photo = await camera.current?.takePhoto();
-      if (photo?.path) {
-        const fullPath = `file://${photo.path}`;
-        console.log('📷 촬영된 사진 경로:', fullPath);
-        await readExif(fullPath);
-      } else {
-        console.log('❌ 사진 경로 없음');
-      }
-    } catch (err) {
-      console.error('📸 촬영 실패:', err);
-    } finally {
-      setShowVisionCamera(false);
+      const tags = await readAsync(uri);
+      console.log('EXIF 데이터:', tags);
+    } catch (error) {
+      console.error('EXIF 데이터 읽기 오류:', error);
     }
   };
 
@@ -46,7 +34,7 @@ export default function TestScreen() {
       return;
 
     const image = result.assets[0];
-    console.log('image-picker 카메라 결과:', image);
+    console.log('이미지 피커 카메라 결과:', image);
     await readExif(image.uri);
   };
 
@@ -61,7 +49,7 @@ export default function TestScreen() {
       return;
 
     const image = result.assets[0];
-    console.log('image-picker 갤러리 결과: ', image);
+    console.log('이미지 피커 갤러리 결과: ', image);
     await readExif(image.uri);
   };
 
@@ -73,20 +61,11 @@ export default function TestScreen() {
       });
       console.log('파일 선택기 결과:', pickResult);
       await readExif(pickResult.uri);
-    } catch (err) {
-      if (err.code === 'OPERATION_CANCELED') {
+    } catch (error) {
+      if (error.code === 'OPERATION_CANCELED') {
         return;
       }
-      console.error('파일 선택 오류:', err);
-    }
-  };
-
-  const readExif = async uri => {
-    try {
-      const tags = await readAsync(uri);
-      console.log('EXIF 데이터:', tags);
-    } catch (error) {
-      console.error('EXIF 데이터 읽기 오류:', error);
+      console.error('파일 선택기 오류:', error);
     }
   };
 
@@ -95,11 +74,14 @@ export default function TestScreen() {
       ImagePicker.openCamera({
         mediaType: 'photo',
         includeExif: true,
-      }).then((image) => {
-        console.log('react-native-image-crop-picker 카메라 결과:', image);
+        // writeTempFile: false,
+        cropping: false,
+        compressImageQuality: 1,
+      }).then(image => {
+        console.log('크롭 피커 카메라 결과:', image);
       });
     } catch (error) {
-      console.error('react-native-image-crop-picker 카메라 오류:', error);
+      console.error('크롭 피커 카메라 오류:', error);
     }
   };
 
@@ -108,59 +90,30 @@ export default function TestScreen() {
       ImagePicker.openPicker({
         mediaType: 'photo',
         includeExif: true,
-      }).then((image) => {
-          console.log('react-native-image-crop-picker 갤러리 결과:', image);
+        // writeTempFile: false,
+        cropping: false,
+        compressImageQuality: 1,
+      }).then(image => {
+        console.log('크롭 피커 갤러리 결과:', image);
+        readExif(image.path);
       });
     } catch (error) {
-      console.error('react-native-image-crop-picker 갤러리 오류:', error);
+      console.error('크롭 피커 갤러리 오류:', error);
     }
   };
 
-  if (showVisionCamera && device != null) {
-    return (
-      <View style={{ flex: 1 }}>
-        <Camera
-          style={{ flex: 1 }}
-          device={device}
-          photo={true}
-          isActive={true}
-          ref={camera}
-        />
-        <TouchableOpacity
-          style={{
-            position: 'absolute',
-            bottom: 40,
-            alignSelf: 'center',
-            backgroundColor: 'white',
-            padding: 10,
-            borderRadius: 8,
-          }}
-          onPress={onVisionCamera}
-        >
-          <Text>촬영</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            position: 'absolute',
-            top: 40,
-            right: 20,
-            backgroundColor: 'white',
-            padding: 10,
-            borderRadius: 8,
-          }}
-          onPress={() => setShowVisionCamera(false)}
-        >
-          <Text>닫기</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+  const onScanner = async () => {
+    const { scannedImages } = await DocumentScanner.scanDocument();
+    if (scannedImages.length > 0) {
+      console.log('스캔 결과: ', scannedImages);
+    }
+  };
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.safeAreaView}>
         <View style={styles.container}>
-          <Text>react-native-image-picker</Text>
+          <Text>Image Picker</Text>
           <TouchableOpacity style={styles.btn} onPress={() => onLaunchCamera()}>
             <Text>카메라</Text>
           </TouchableOpacity>
@@ -173,7 +126,7 @@ export default function TestScreen() {
 
           <View style={styles.line} />
 
-          <Text>react-native-image-crop-picker</Text>
+          <Text>Crop Picker</Text>
           <TouchableOpacity
             style={styles.btn}
             onPress={() => onCropPickerCamera()}
@@ -188,23 +141,20 @@ export default function TestScreen() {
           </TouchableOpacity>
 
           <View style={styles.line} />
-          
-          <Text>react-native-documents-picker</Text>
+
+          <Text>Documents Picker</Text>
           <TouchableOpacity
             style={styles.btn}
             onPress={() => onDocumentPicker()}
           >
             <Text>파일 선택기</Text>
           </TouchableOpacity>
-          
+
           <View style={styles.line} />
 
-          <Text>vision camera</Text>
-          <TouchableOpacity
-            style={styles.btn}
-            onPress={() => setShowVisionCamera(true)}
-          >
-            <Text>카메라</Text>
+          <Text>Scanner Plugin</Text>
+          <TouchableOpacity style={styles.btn} onPress={() => onScanner()}>
+            <Text>스캐너</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -235,5 +185,5 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#ccc',
     marginVertical: 10,
-  }
+  },
 });
